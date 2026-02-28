@@ -2,6 +2,9 @@
 
 A self-study guide teaching undergraduate students how to create and use affinity diagrams to analyse qualitative data collected through interviews, observations, secondary research, and other methods.
 
+# URL
+https://buas-media-interactive.github.io/affinity-diagrams/
+
 ## About
 
 This tutorial was created for design students at the **Academy for AI, Games & Media (AGM)** in the Netherlands. It is pitched at a 2nd year undergraduate level but can be used across all years as a reference resource.
