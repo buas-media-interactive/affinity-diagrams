@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Create an Affinity Diagram — A Student Guide</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --ink:       #1a1612;
+      --paper:     #faf8f4;
+      --cream:     #f2ede4;
+      --rule:      #d9d0c1;
+      --accent:    #c1440e;       /* warm terracotta */
+      --accent2:   #2d6a4f;       /* deep sage */
+      --figjam:    #7c5cbf;       /* FigJam purple */
+      --yellow:    #f4c542;
+      --blue-note: #4a90c4;
+      --pink-note: #d95f7a;
+      --green-note:#4aad6f;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Source Serif 4', Georgia, serif;
+      --font-mono:    'DM Mono', monospace;
+      --sidebar-w: 260px;
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    /* ─── Print ─────────────────────────────────────────────────── */
+    @media print {
+      .sidebar, .top-bar, .print-hide { display: none !important; }
+      .main-content { margin-left: 0 !important; padding: 0 !important; }
+      .section-block { page-break-inside: avoid; break-inside: avoid; }
+      .step-header { page-break-after: avoid; break-after: avoid; }
+      body { font-size: 11pt; color: #000; background: #fff; }
+      a { color: #000; text-decoration: underline; }
+      .figjam-tip { border: 1px solid #999; background: #f5f5f5 !important; }
+      .doc-alert { border: 2px solid #000; background: #f5f5f5 !important; }
+      .image-placeholder { border: 1px dashed #999; background: #f5f5f5 !important; }
+      h1, h2, h3, h4 { color: #000 !important; }
+      .step-number { color: #000 !important; -webkit-text-stroke: 1px #000; }
+    }
+
+    /* ─── Top bar ───────────────────────────────────────────────── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      z-index: 1100;
+      gap: 1rem;
+    }
+    .top-bar .brand {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .top-bar .method-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .print-btn {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+      padding: 4px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .print-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* ─── Sidebar ───────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: 56px; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--cream);
+      border-right: 1px solid var(--rule);
+      overflow-y: auto;
+      padding: 1.5rem 0 2rem;
+      z-index: 1000;
+    }
+    .sidebar-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      padding: 0 1.25rem 0.5rem;
+    }
+    .sidebar nav a {
+      display: block;
+      padding: 0.45rem 1.25rem;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: #666;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.3;
+    }
+    .sidebar nav a:hover { color: var(--ink); background: rgba(0,0,0,0.04); }
+    .sidebar nav a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(193,68,14,0.06);
+      font-weight: 600;
+    }
+    .sidebar nav a .step-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1px;
+    }
+    .sidebar nav a.active .step-label { color: var(--accent); opacity: 0.7; }
+    .sidebar-divider {
+      height: 1px;
+      background: var(--rule);
+      margin: 0.75rem 1.25rem;
+    }
+
+    /* ─── Main content ──────────────────────────────────────────── */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      margin-top: 56px;
+      padding: 3rem 3rem 5rem;
+      max-width: 880px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 1.5rem 1.25rem 3rem; }
+    }
+
+    /* ─── Hero ──────────────────────────────────────────────────── */
+    .hero {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: #555;
+      font-style: italic;
+      max-width: 600px;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .meta-pill {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 4px 12px;
+      border-radius: 2px;
+    }
+
+    /* ─── Documentation alert ───────────────────────────────────── */
+    .doc-alert {
+      background: #fffbea;
+      border: 2px solid var(--yellow);
+      border-left: 6px solid #e6a800;
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .doc-alert-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .doc-alert-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #7a5500;
+      margin-bottom: 0.25rem;
+    }
+    .doc-alert p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #5a4000;
+      line-height: 1.6;
+    }
+
+    /* ─── Section blocks ────────────────────────────────────────── */
+    .section-block {
+      margin-bottom: 4rem;
+      scroll-margin-top: 80px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .step-number {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--accent);
+      flex-shrink: 0;
+      width: 56px;
+      text-align: center;
+    }
+    .step-header-text {}
+    .step-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 2px;
+    }
+    .step-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    /* Section heading (no step number) */
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ─── Body typography ───────────────────────────────────────── */
+    .main-content p { margin-bottom: 1rem; }
+    .main-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 1.75rem 0 0.5rem;
+    }
+    .main-content h4 {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin: 1.5rem 0 0.4rem;
+    }
+    .main-content ul, .main-content ol {
+      padding-left: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .main-content li { margin-bottom: 0.35rem; }
+
+    strong { font-weight: 600; color: var(--ink); }
+    em { font-style: italic; }
+
+    /* ─── Callout boxes ─────────────────────────────────────────── */
+    .callout {
+      background: var(--cream);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 4px 4px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.93rem;
+    }
+    .callout-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    /* ─── FigJam tip ────────────────────────────────────────────── */
+    .figjam-tip {
+      background: #f3eeff;
+      border: 1.5px solid #c7b0f0;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin: 1.75rem 0;
+      font-size: 0.9rem;
+    }
+    .figjam-tip-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .figjam-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--figjam);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .figjam-tip p { margin: 0; color: #3a2d5a; line-height: 1.6; }
+
+    /* ─── Example table ─────────────────────────────────────────── */
+    .example-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+    }
+    .example-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      text-align: left;
+    }
+    .example-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+    .example-table tr:last-child td { border-bottom: none; }
+    .example-table tr:nth-child(even) td { background: var(--cream); }
+    .avoid-col { color: #b02a2a; }
+    .aim-col   { color: #1a6b3c; }
+
+    /* ─── Sticky note examples ──────────────────────────────────── */
+    .notes-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+    .sticky {
+      width: 160px;
+      min-height: 100px;
+      padding: 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      line-height: 1.4;
+      border-radius: 2px;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.15);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .sticky::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 2px 2px 0 0;
+    }
+    .sticky.yellow { background: #fff176; }
+    .sticky.blue   { background: #bbdefb; }
+    .sticky.pink   { background: #f8bbd9; }
+    .sticky.green  { background: #c8e6c9; }
+    .sticky-source {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    /* ─── Image placeholder ─────────────────────────────────────── */
+    .image-placeholder {
+      background: var(--cream);
+      border: 2px dashed var(--rule);
+      border-radius: 4px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      margin: 1.75rem 0;
+      color: #aaa;
+    }
+    .image-placeholder-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.4;
+    }
+    .image-placeholder-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #bbb;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .image-placeholder p {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #bbb;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* ─── Framework pills ───────────────────────────────────────── */
+    .framework-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1.25rem 0;
+    }
+    .framework-card {
+      flex: 1;
+      min-width: 200px;
+      border: 1.5px solid var(--rule);
+      border-radius: 6px;
+      padding: 1rem;
+      background: #fff;
+    }
+    .framework-card-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 0.4rem;
+    }
+    .framework-card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+    .framework-card p {
+      font-size: 0.82rem;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .phase-arrow {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ─── Further reading cards ─────────────────────────────────── */
+    .reading-card {
+      border: 1.5px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      background: #fff;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .reading-type {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--cream);
+      color: #888;
+      border: 1px solid var(--rule);
+      padding: 2px 7px;
+      border-radius: 2px;
+      white-space: nowrap;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .reading-card-body {}
+    .reading-card-title {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+    .reading-card-title a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .reading-card-title a:hover { text-decoration: underline; }
+    .reading-card-desc {
+      font-size: 0.83rem;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ─── Next steps grid ───────────────────────────────────────── */
+    .next-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+    .next-step-card {
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 4px;
+      padding: 1.1rem 1.15rem;
+    }
+    .next-step-method {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+      color: #fff;
+    }
+    .next-step-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ─── Progress indicator ─────────────────────────────────────── */
+    .progress-bar-wrap {
+      position: fixed;
+      top: 56px;
+      left: var(--sidebar-w);
+      right: 0;
+      height: 3px;
+      background: transparent;
+      z-index: 999;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    @media (max-width: 768px) {
+      .progress-bar-wrap { left: 0; }
+    }
+
+    /* ─── Separator ─────────────────────────────────────────────── */
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 3rem 0;
+    }
+
+    /* ─── Inline code ───────────────────────────────────────────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--cream);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Top bar ─────────────────────────────────────────────── -->
+  <header class="top-bar">
+    <span class="brand">Affinity Diagram — Student Guide</span>
+    <span class="method-tag">Design Research</span>
+    <button class="print-btn print-hide" onclick="window.print()">⎙ Print / Save PDF</button>
+  </header>
+
+  <!-- ─── Reading progress bar ────────────────────────────────── -->
+  <div class="progress-bar-wrap print-hide">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+
+  <!-- ─── Sidebar navigation ──────────────────────────────────── -->
+  <aside class="sidebar print-hide">
+    <div class="sidebar-label">Contents</div>
+    <nav id="sidebarNav">
+      <a href="#intro"><span class="step-label">Overview</span>What is an Affinity Diagram?</a>
+      <a href="#documentation"><span class="step-label">Before you begin</span>Documentation Notice</a>
+      <div class="sidebar-divider"></div>
+      <a href="#step2"><span class="step-label">Step 2</span>Preparing your data</a>
+      <a href="#step3"><span class="step-label">Step 3</span>Externalising the data</a>
+      <a href="#step4"><span class="step-label">Step 4</span>Clustering</a>
+      <a href="#step5"><span class="step-label">Step 5</span>Naming the clusters</a>
+      <a href="#step6"><span class="step-label">Step 6</span>Higher-order themes</a>
+      <a href="#step7"><span class="step-label">Step 7</span>Interpreting your diagram</a>
+      <div class="sidebar-divider"></div>
+      <a href="#nextsteps"><span class="step-label">After this</span>Next steps</a>
+      <a href="#reading"><span class="step-label">Resources</span>Further reading</a>
+    </nav>
+  </aside>
+
+  <!-- ─── Main content ─────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <header class="hero" id="top">
+      <p class="hero-eyebrow">Design Research Methods — Undergraduate Guide</p>
+      <h1>How to Create an Affinity Diagram</h1>
+      <p class="hero-sub">A step-by-step guide to analysing qualitative data from interviews, observations, and secondary research.</p>
+      <div class="hero-meta">
+        <span class="meta-pill">Level: 2nd Year</span>
+        <span class="meta-pill">Physical &amp; Digital</span>
+        <span class="meta-pill">Collaborative Method</span>
+        <span class="meta-pill">Design Thinking</span>
+      </div>
+    </header>
+
+    <!-- ─── STEP 1: What is an affinity diagram ─────────────────── -->
+    <section class="section-block" id="intro">
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 1 — Overview</p>
+          <h2>What is an affinity diagram and when do you use it?</h2>
+        </div>
+      </div>
+
+      <p>An affinity diagram is a method for making sense of large amounts of qualitative data. It helps you move from a collection of raw observations, quotes, and notes — often messy and scattered — toward patterns and insights that can inform your design decisions.</p>
+
+      <p>The method works by externalising your data (getting it out of your head and onto individual notes), then grouping those notes by natural relationship or "affinity" rather than by pre-determined categories. The clusters that emerge reveal what your data is actually telling you, rather than what you expected to find.</p>
+
+      <h3>Where it sits in your design process</h3>
+
+      <div class="framework-row">
+        <div class="framework-card">
+          <div class="framework-card-label">d.school — 5 phases</div>
+          <div class="framework-card-title">Empathise <span class="phase-arrow">→</span> Define</div>
+          <p>The affinity diagram lives at this transition. It transforms raw research into a clear problem definition, ready for the Define phase.</p>
+        </div>
+        <div class="framework-card">
+          <div class="framework-card-label">IDEO — 3 phases</div>
+          <div class="framework-card-title">Inspiration <span class="phase-arrow">→</span> Ideation</div>
+          <p>It sits at the end of the Inspiration phase, organising what you've learned so you can move with clarity into Ideation.</p>
+        </div>
+      </div>
+
+      <h3>When to use it</h3>
+      <p>Use an affinity diagram when you have collected qualitative data from multiple sources — interviews, observations, secondary research, competitive analysis — and need to make sense of it before moving to synthesis or ideation.</p>
+
+      <h3>What it is not</h3>
+      <p>It is not a quantitative tool. It does not tell you how many people said something. It helps you understand <em>what</em> people experience, think, or need, and <em>why</em> patterns exist across your data.</p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Diagram showing the affinity diagram positioned within the Design Thinking process (d.school and IDEO frameworks)</p>
+      </div>
+    </section>
+
+    <!-- ─── DOCUMENTATION ALERT ─────────────────────────────────── -->
+    <div class="doc-alert" id="documentation">
+      <div class="doc-alert-icon">⚠️</div>
+      <div>
+        <div class="doc-alert-title">Document your work before you dismantle it</div>
+        <p>Whether you are working physically or digitally, <strong>photograph or export your diagram at every major stage</strong> — after externalising, after clustering, after naming, and when complete. If you are working on a wall, take multiple photos: the whole wall, each cluster close-up, and any key insights. If you are in FigJam, export a high-resolution image at the end of each session. Write a short synthesis note (a paragraph or two) capturing your anchor insights. This documentation is part of your research record and may be required as evidence of your process. Do this <em>before</em> you leave the room or close the board.</p>
+      </div>
+    </div>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 2: Preparing your data ─────────────────────────── -->
+    <section class="section-block" id="step2">
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 2 — Preparation</p>
+          <h2>Before you start — Preparing your data</h2>
+        </div>
+      </div>
+
+      <p>Before you can build an affinity diagram, you need to prepare your raw material. This step is about transforming everything you have collected — in whatever form it came — into individual, comparable units that you can physically or digitally move around.</p>
+
+      <h3>Gather all your sources</h3>
+      <p>Start by collecting everything in one place. Your data might include interview transcripts or notes, field observation notes, findings from secondary research or literature, screenshots or notes from competitive analysis, and any other relevant material you have gathered. It doesn't matter that these come from different sources — that diversity is actually valuable. The affinity diagram will help you find connections across them.</p>
+
+      <h3>Write one idea per note</h3>
+      <p>This is the most important rule of this step. Each sticky note should contain one single observation, quote, behaviour, pain point, or finding — nothing more. If a note contains two ideas, split it into two notes.</p>
+
+      <p>A good note is specific and concrete. Prefer the actual words of a participant when possible, or a close paraphrase. Avoid interpreting or summarising at this stage — that comes later.</p>
+
+      <h4>Examples of good notes</h4>
+      <div class="notes-grid">
+        <div class="sticky yellow">"I never know if my message has been read"<span class="sticky-source">Interview</span></div>
+        <div class="sticky blue">Competitor app shows read receipts — users in reviews find them anxiety-inducing<span class="sticky-source">Competitive analysis</span></div>
+        <div class="sticky pink">Async communication reduces interruptions but increases response uncertainty<span class="sticky-source">Literature</span></div>
+        <div class="sticky green">User refreshed inbox 7 times in 4 minutes after sending email<span class="sticky-source">Observation</span></div>
+      </div>
+
+      <h4>Examples of notes to avoid</h4>
+      <div class="callout">
+        <span class="callout-label">Watch out for</span>
+        <ul style="margin:0; padding-left:1.1rem;">
+          <li><strong>"Communication is a problem"</strong> — Too vague, already interpreted. What specifically about communication?</li>
+          <li><strong>"Users don't like notifications and also feel overwhelmed by emails"</strong> — Two separate ideas. Split into two notes.</li>
+        </ul>
+      </div>
+
+      <h3>Label your sources</h3>
+      <p>Since your notes come from different sources, add a small label or colour code to indicate where each note came from (e.g. interview, observation, desk research). This won't affect the clustering process, but it will help you later when you need to trace insights back to evidence.</p>
+
+      <h3>How many notes?</h3>
+      <p>There is no fixed number, but as a rough guide: too few notes (under 20–30) and you won't have enough material to find meaningful patterns. Too many (over 200) and the process becomes unwieldy. If you are working in a team, divide the preparation work so everyone contributes notes.</p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Examples of well-written sticky notes from different sources, colour coded by source type</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Create your notes directly in FigJam using the sticky note tool. Use different colours to represent different data sources. You can also import text and highlight key passages before transferring them to notes.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 3: Externalising ────────────────────────────────── -->
+    <section class="section-block" id="step3">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 3 — Setup</p>
+          <h2>Externalising the data — Getting everything out and visible</h2>
+        </div>
+      </div>
+
+      <p>Now that your notes are prepared, the next step is to get them all out in front of you at once. This might feel chaotic — and that's completely normal. Resist the urge to start organising too early. This step is about visibility, not order.</p>
+
+      <h3>Set up your space</h3>
+      <p>You need a large, open surface. A whiteboard, a wall, or a large table all work well. Put all your sticky notes up at once, spread out randomly. Don't place them in groups yet — just get them up. The goal is to be able to see everything simultaneously, because insight often comes from unexpected connections across the whole dataset.</p>
+
+      <p>If you are working in a team, everyone should put their notes up together. This is also a good moment for each person to briefly talk through their notes as they place them, so the whole team has a shared understanding of the material before clustering begins.</p>
+
+      <h3>Read everything</h3>
+      <p>Once all notes are up, take time — individually and in silence — to read every single note. All of them. Even the ones you didn't write. This shared immersion in the data is important: it ensures that the clustering that follows is informed by the whole dataset, not just the parts each person contributed.</p>
+
+      <h3>Don't interpret yet</h3>
+      <p>At this stage you are not looking for patterns, themes, or conclusions. You are simply making the data visible and shared. If you find yourself thinking <em>"this obviously means that…"</em> — note that thought somewhere, but don't let it drive your decisions yet. The structure should emerge from the data, not be imposed on it.</p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Photo of a team standing in front of a wall covered in sticky notes, all spread out before clustering begins</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Create a large open frame and scatter all your sticky notes within it randomly before you begin. Use the zoom-out function to get a full view of all your material at once. If working as a team, use a shared board and take a few minutes for everyone to silently scroll through all the notes before moving anything.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 4: Clustering ────────────────────────────────────── -->
+    <section class="section-block" id="step4">
+      <div class="step-header">
+        <div class="step-number">4</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 4 — Core activity</p>
+          <h2>Clustering — Finding patterns in your data</h2>
+        </div>
+      </div>
+
+      <p>This is the core of the affinity diagram process. Clustering is the act of grouping notes that share a natural relationship — not because they belong to the same topic or category, but because they seem to belong together in a way that feels meaningful. It is an iterative, often nonlinear process, and it requires patience.</p>
+
+      <h3>How to start</h3>
+      <p>Pick up any note — literally any one — and place it in an open area of your surface. Then find another note that feels related to it in some way and place it next to it. Don't overthink the first move. The goal is to start creating gravity points around which other notes can gather.</p>
+      <p>Continue moving notes toward groups that feel right. If a note doesn't seem to belong anywhere, leave it on its own for now. Isolated notes are not a problem — they may form their own group later, or they may remain outliers, which is also valuable information.</p>
+
+      <h3>Follow affinity, not categories</h3>
+      <p>This is the most important principle of clustering. You are not creating predetermined categories and sorting notes into them. You are letting the groups emerge from the relationships between notes themselves.</p>
+
+      <div class="callout">
+        <span class="callout-label">Key question to ask yourself</span>
+        <p style="margin:0">"What is it about these notes that makes them feel related?" If you can't answer that, they may not belong together yet.</p>
+      </div>
+
+      <h3>Work in silence (at first)</h3>
+      <p>If you are working in a team, begin the clustering phase in silence. This prevents dominant voices from driving the structure too early and allows the data to speak before opinions do. Each person moves notes according to their own reading of the relationships. If someone moves a note you already placed, let them. If a note keeps moving back and forth between two groups, that is a signal worth paying attention to — it may belong to both, or it may reveal a tension in the data.</p>
+
+      <h3>Iterate openly</h3>
+      <p>After the silent phase, open the process up to discussion. Talk through the groupings, challenge them, and reorganise as needed. Clustering is not a one-pass activity — expect to move notes multiple times. Groups will split, merge, and shift as your collective understanding of the data deepens.</p>
+
+      <p>A cluster typically contains between 3 and 8 notes. If a group has more than 8–10 notes, consider whether it contains sub-groups. If a group has only 1–2 notes, consider whether those notes might fit elsewhere or whether they represent something genuinely distinct.</p>
+
+      <h3>Common mistakes to avoid</h3>
+      <div class="callout">
+        <span class="callout-label">Watch out for</span>
+        <ul style="margin:0; padding-left:1.1rem;">
+          <li><strong>Clustering by source</strong> — grouping all interview notes together, all desk research together. This defeats the purpose. Mix your sources freely.</li>
+          <li><strong>Clustering by topic too early</strong> — creating broad buckets like "communication" and sorting into them. This imposes structure rather than revealing it.</li>
+          <li><strong>Stopping too soon</strong> — the first round of clusters is rarely the best one. Push yourself to revisit and reorganise at least once.</li>
+          <li><strong>Letting one person drive</strong> — in a team, make sure everyone is actively moving notes, not just watching one person organise.</li>
+        </ul>
+      </div>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Photo or illustration showing notes being moved into emerging clusters — mid-process, with some groups formed and some notes still isolated</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Use the drag function to move notes into clusters. Use the section tool to loosely define emerging groups without committing to them. If working as a team, assign each person a cursor colour so you can see who is moving what. Zoom out to see the whole picture, zoom in to read individual notes carefully.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 5: Naming ────────────────────────────────────────── -->
+    <section class="section-block" id="step5">
+      <div class="step-header">
+        <div class="step-number">5</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 5 — Analysis</p>
+          <h2>Naming the clusters — Writing insight headers</h2>
+        </div>
+      </div>
+
+      <p>Once your clusters have stabilised and you feel confident in the groupings, it is time to name them. This step is deceptively simple — but it is where the real analytical work happens. A good cluster name does not just describe what the notes have in common. It captures the <em>insight</em> that the cluster reveals.</p>
+
+      <h3>The difference between a topic and an insight</h3>
+      <p>This is the most important distinction in this step. A topic label tells you what the cluster is <em>about</em>. An insight header tells you what the cluster <em>means</em>.</p>
+
+      <table class="example-table">
+        <thead>
+          <tr><th>Topic label — avoid this</th><th>Insight header — aim for this</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="avoid-col"><em>Communication</em></td>
+            <td class="aim-col"><em>People feel anxious when they don't know if their message has been received</em></td>
+          </tr>
+          <tr>
+            <td class="avoid-col"><em>Technology barriers</em></td>
+            <td class="aim-col"><em>Unfamiliar tools create hesitation that slows down collaboration</em></td>
+          </tr>
+          <tr>
+            <td class="avoid-col"><em>Time</em></td>
+            <td class="aim-col"><em>Users adapt their behaviour to fit the tool's pace, not their own</em></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Insight headers are usually written as full sentences. They make a claim. They could, in principle, be proven wrong — which is a good sign that they are specific enough to be useful.</p>
+
+      <h3>How to write them</h3>
+      <p>Look at the notes in a cluster and ask: <em>"If these notes are all true, what do they collectively tell me about the people I am designing for?"</em> Your answer to that question is your insight header.</p>
+      <p>Write the header on a different coloured sticky note and place it at the top of the cluster. It should feel like it earns the notes beneath it — if a note doesn't quite fit the header you've written, either the note belongs elsewhere or the header needs to be revised.</p>
+
+      <h3>Expect to revise</h3>
+      <p>Writing insight headers often causes you to reorganise your clusters. You might find that a cluster is actually two clusters with two different insights, or that two clusters share the same underlying insight and should be merged. This is normal and valuable — let the naming process push you back into clustering if needed.</p>
+
+      <h3>Involve the whole team</h3>
+      <p>If working in a team, write headers collaboratively or at least review them together. Challenge each other: <em>"Does this header actually capture what these notes are saying, or is it what we expected to find?"</em></p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Photo or illustration of clusters with coloured header cards placed at the top of each group</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Use a distinct sticky note colour or a text label in a larger font size to mark your insight headers. Place them at the top of each section frame. Use FigJam's comment feature to flag headers that the team is still debating, keeping the discussion visible without disrupting the diagram itself.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 6: Higher-order themes ─────────────────────────── -->
+    <section class="section-block" id="step6">
+      <div class="step-header">
+        <div class="step-number">6</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 6 — Optional</p>
+          <h2>Finding higher-order themes — Going deeper into your data</h2>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Optional step</span>
+        <p style="margin:0">This step is optional, but worth attempting when your dataset is large, your clusters are numerous, or your project requires a deeper level of synthesis before you can move forward.</p>
+      </div>
+
+      <h3>When to do this step</h3>
+      <p>Consider moving to higher-order themes if you have more than 6–8 clusters and you are finding it difficult to see the bigger picture, if your project requires you to define a focused problem statement or design direction, or if you are preparing to present your findings to others and need a clear, communicable structure.</p>
+      <p>If you only have a small number of clusters and the insights already feel clear and manageable, you may not need this step. Trust your judgement.</p>
+
+      <h3>How it works</h3>
+      <p>Step back from the individual notes entirely and look only at your insight headers. Read them as a set. Ask yourself: <em>"Are there headers that seem to be telling me different aspects of the same underlying story?"</em></p>
+      <p>Group the headers that feel related — physically moving the entire clusters together on your surface, or creating a higher-level label above them. Then write a new, higher-order header for each group of clusters, following the same principle as before: aim for an insight, not a topic.</p>
+
+      <h3>An example</h3>
+      <p>Imagine you have these three cluster headers:</p>
+      <ul>
+        <li><em>People feel anxious when they don't know if their message has been received</em></li>
+        <li><em>Users adapt their behaviour to fit the tool's pace, not their own</em></li>
+        <li><em>Unfamiliar tools create hesitation that slows down collaboration</em></li>
+      </ul>
+      <p>A higher-order theme across these three might be: <strong>"Uncertainty about how tools work undermines people's confidence in their own communication."</strong> That is something you could plausibly turn into a How Might We question or a design principle.</p>
+
+      <h3>Keep the layers visible</h3>
+      <p>When working physically, arrange your higher-order themes at the top of the wall or surface, with the cluster headers beneath them and the individual notes beneath those. This hierarchy should remain visible — you want to be able to trace any higher-order insight back down to the raw data it came from. That traceability is what gives your insights credibility.</p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Photo or illustration showing a three-level hierarchy — higher-order themes at top, cluster headers in the middle, individual notes at the bottom</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Use nested frames or a larger containing frame to group related clusters under a higher-order theme. Use a bold text label or a distinctly coloured sticky note at the top of each containing frame for the higher-order header. The zoom function is especially useful here — zoom out to read the higher-order themes, zoom in to interrogate the individual notes beneath them.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── STEP 7: Interpreting ──────────────────────────────────── -->
+    <section class="section-block" id="step7">
+      <div class="step-header">
+        <div class="step-number">7</div>
+        <div class="step-header-text">
+          <p class="step-eyebrow">Step 7 — Synthesis</p>
+          <h2>Interpreting and using your diagram — From patterns to direction</h2>
+        </div>
+      </div>
+
+      <p>Building the affinity diagram is not the end of your analysis — it is the beginning of it. Many students make the mistake of stopping here, treating the clustered diagram as the deliverable. It is not. The diagram is a map. This step is about reading that map and deciding where to go next.</p>
+
+      <h3>Sit with it before you conclude</h3>
+      <p>Before you start drawing conclusions, spend time simply observing your completed diagram. Step back and look at it as a whole. What strikes you? What surprises you? What feels obvious in retrospect but wasn't when you started? What is conspicuously absent — what did you expect to find that isn't there?</p>
+      <p>These initial reactions are worth writing down. They are often where the most honest insights live, before the pressure to produce a neat conclusion takes over.</p>
+
+      <h3>Ask analytical questions</h3>
+      <p>Use the following questions to move from observation to interpretation. Work through them individually first, then discuss as a team if you are working collaboratively.</p>
+
+      <h4>About the clusters</h4>
+      <ul>
+        <li>Which clusters are largest? Does size reflect importance, or does it reflect where you spent most of your research time?</li>
+        <li>Which clusters surprised you most? Why?</li>
+        <li>Are there clusters that contradict each other? What might that tension mean?</li>
+        <li>Are there any isolated notes that didn't fit anywhere? What might they be pointing to?</li>
+      </ul>
+
+      <h4>About the patterns</h4>
+      <ul>
+        <li>Which insights appear across multiple clusters or sources? Recurring patterns across different data sources carry particular weight.</li>
+        <li>Which insights are supported by only one source or one participant? These are not necessarily less valid, but they deserve scrutiny.</li>
+        <li>Are there insights that challenge your assumptions or your initial brief? These are often the most valuable ones.</li>
+      </ul>
+
+      <h4>About what's missing</h4>
+      <ul>
+        <li>Are there groups of people, situations, or experiences that your data doesn't represent well? Gaps in your data are findings too.</li>
+        <li>If you could go back and collect more data, what would you focus on?</li>
+      </ul>
+
+      <h3>Distinguish observation from interpretation</h3>
+      <p>This is a critical analytical skill. An observation is something your data directly shows. An interpretation is a claim you are making about what that observation means. Both are necessary, but you must know which is which.</p>
+
+      <div class="callout">
+        <span class="callout-label">Example</span>
+        <p style="margin:0;margin-bottom:0.5rem"><strong>Observation:</strong> "Five out of six interview participants mentioned checking their phone immediately after sending a message."</p>
+        <p style="margin:0"><strong>Interpretation:</strong> "People have developed anxious checking behaviours as a response to communication uncertainty."</p>
+      </div>
+
+      <p>Your insight headers from Step 5 should be interpretations — grounded in observations, but making a claim that goes beyond them. When you present or write up your findings, always be able to point from your interpretations back to the observations that support them. If you can't, the interpretation is not yet grounded enough.</p>
+
+      <h3>Identify your most significant insights</h3>
+      <p>Not all insights are equal. Once you have interrogated your diagram, identify the two or three insights that feel most significant for your project — the ones that most directly illuminate the problem you are designing for, or that most powerfully reframe how you understand it. These are your <strong>anchor insights</strong>. They will do the most work in the next phase of your project.</p>
+
+      <h3>Translate insights into design direction</h3>
+      <p>Once you have your anchor insights, you are ready to move forward. Depending on where you are in your design process, your next step might be writing a Point of View statement or a problem definition (d.school <em>Define</em> phase), framing How Might We questions to open up ideation, identifying design principles that should guide your work, or deciding where you need to go back and collect more data.</p>
+      <p>Your affinity diagram does not make these decisions for you. But if you have built it carefully and interrogated it honestly, it gives you the evidence and the clarity to make them yourself.</p>
+
+      <div class="image-placeholder">
+        <div class="image-placeholder-icon">🖼</div>
+        <span class="image-placeholder-label">Image placeholder</span>
+        <p>Photo of a completed affinity diagram with annotations or arrows showing how insights connect to a problem statement or How Might We questions</p>
+      </div>
+
+      <div class="figjam-tip">
+        <div class="figjam-tip-header">
+          <span class="figjam-badge">FigJam Tip</span>
+        </div>
+        <p>Add a dedicated "Insights" frame alongside your diagram where you write up your anchor insights and How Might We questions. This keeps your interpretation visibly connected to the evidence. Use FigJam's export function to save a high-resolution image of your diagram for your research documentation.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── NEXT STEPS ─────────────────────────────────────────────── -->
+    <section class="section-block" id="nextsteps">
+      <div class="section-heading">Where to go next</div>
+      <p style="margin-top:0.75rem">Your affinity diagram is a springboard, not a destination. Once you have completed your analysis and identified your anchor insights, the natural next steps depend on where you are in your design process.</p>
+
+      <p>If you are following the <strong>d.school framework</strong>, your insights are now ready to feed into the <em>Define</em> phase. If you are following the <strong>IDEO framework</strong>, you are transitioning from <em>Inspiration</em> into <em>Ideation</em>. In either case, the diagram does not close your research — it often reveals where you need to go deeper.</p>
+
+      <div class="next-steps-grid">
+        <div class="next-step-card">
+          <div class="next-step-method">Point of View Statement</div>
+          <p class="next-step-desc">A concise articulation of the user, their need, and the insight that reframes the problem. The direct output of your Define phase.</p>
+        </div>
+        <div class="next-step-card">
+          <div class="next-step-method">How Might We Questions</div>
+          <p class="next-step-desc">Transform your anchor insights into open-ended design questions that unlock ideation without prescribing solutions.</p>
+        </div>
+        <div class="next-step-card">
+          <div class="next-step-method">Design Principles</div>
+          <p class="next-step-desc">Distil your higher-order themes into guiding principles that shape every decision in your design process.</p>
+        </div>
+        <div class="next-step-card">
+          <div class="next-step-method">Personas</div>
+          <p class="next-step-desc">Use your clusters to build composite representations of the people you are designing for, grounded in real research patterns.</p>
+        </div>
+        <div class="next-step-card">
+          <div class="next-step-method">User Journey Map</div>
+          <p class="next-step-desc">Translate your insights into a temporal narrative showing the experience you are designing for, end to end.</p>
+        </div>
+        <div class="next-step-card">
+          <div class="next-step-method">Further Research</div>
+          <p class="next-step-desc">Use the gaps and outliers you identified in Step 7 to plan targeted follow-up interviews or observations.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule" />
+
+    <!-- ─── FURTHER READING ────────────────────────────────────────── -->
+    <section class="section-block" id="reading">
+      <div class="section-heading">Further reading</div>
+      <p style="margin-top:0.75rem">The following resources will help you deepen your understanding of affinity diagrams — how they work, where they fit, and how to use them well.</p>
+
+      <h3>Foundational texts</h3>
+
+      <div class="reading-card">
+        <span class="reading-type">Book</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">Holtzblatt, K. &amp; Beyer, H. (2017). <em>Contextual Design: Design for Life</em> (2nd ed.). Morgan Kaufmann.</div>
+          <p class="reading-card-desc">The academic foundation for affinity diagrams in a design research context. Dense but authoritative — particularly useful if you want to understand the method's origins in contextual inquiry.</p>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <span class="reading-type">Book</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">Martin, B. &amp; Hanington, B. (2012). <em>Universal Methods of Design</em>. Rockport Publishers.</div>
+          <p class="reading-card-desc">A practical and accessible reference covering 100 design methods including affinity diagrams. An excellent general reference for undergraduate students that covers the broader toolkit of design research.</p>
+        </div>
+      </div>
+
+      <h3>Online resources</h3>
+
+      <div class="reading-card">
+        <span class="reading-type">Article</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">Nielsen Norman Group — <a href="https://www.nngroup.com/articles/affinity-diagram/" target="_blank" rel="noopener">Affinity Diagramming: Collaboratively Sort UX Findings &amp; Design Ideas</a></div>
+          <p class="reading-card-desc">Clear, evidence-based, and thorough. A highly recommended first read — covers the method step by step with real examples. Start here.</p>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <span class="reading-type">Article</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">Nielsen Norman Group — <a href="https://www.nngroup.com/articles/affinity-diagramming-pitfalls/" target="_blank" rel="noopener">Avoiding 3 Common Pitfalls of Affinity Diagramming</a></div>
+          <p class="reading-card-desc">An excellent companion to the above article. Addresses the most common mistakes students and practitioners make — including groupthink and clustering by category. Read this after your first attempt.</p>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <span class="reading-type">Article</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">Interaction Design Foundation — <a href="https://www.interaction-design.org/literature/article/how-to-create-affinity-diagrams" target="_blank" rel="noopener">How to Get Started with Affinity Diagrams</a></div>
+          <p class="reading-card-desc">Well-structured and student-friendly, with video content and worked examples. Good for visual learners or those who want a walkthrough in a different format.</p>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <span class="reading-type">Website</span>
+        <div class="reading-card-body">
+          <div class="reading-card-title">IDEO Design Kit — <a href="https://www.designkit.org/methods" target="_blank" rel="noopener">Design Methods (designkit.org)</a></div>
+          <p class="reading-card-desc">See how IDEO positions this method — and related ones — within human-centred design practice. Short, practical, and rooted in real project experience. Useful for understanding how the method fits into a broader process.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="border-top:1px solid var(--rule); padding-top:1.5rem; margin-top:2rem; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:0.75rem;">
+      <div>
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:0 0 0.25rem">Created by Laura Pardo</p>
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:#bbb;margin:0">Academy for AI, Games &amp; Media (AGM) · 2025</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:#bbb;margin:0 0 0.25rem">Developed with the assistance of Claude (Anthropic)</p>
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:#bbb;margin:0">For educational use — open resource</p>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ─── Reading progress bar
+    const bar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (scrollTop / docHeight * 100) + '%';
+    });
+
+    // ─── Active sidebar link highlighting
+    const sections = document.querySelectorAll('.section-block, .doc-alert');
+    const navLinks = document.querySelectorAll('#sidebarNav a');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    sections.forEach(s => { if (s.id) observer.observe(s); });
+  </script>
+
+</body>
+</html>
