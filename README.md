@@ -19,18 +19,11 @@ The guide covers:
 
 ## Format
 
-A single-page interactive HTML document built with Bootstrap 5. Features include:
-
-- Sticky sidebar navigation with active section highlighting
-- Reading progress bar
-- Print / Save as PDF button (sidebar and navigation hidden in print)
-- FigJam tips throughout for teams working digitally
-- Image placeholder frames ready for your own photographs
-- Fully responsive for desktop, tablet, and mobile
+A single-page interactive HTML document built with Bootstrap 5.
 
 ## How to use
 
-Download `affinity-diagram-tutorial.html` and open it in any modern browser. No server, no dependencies, no installation required. Everything is self-contained in the single file.
+Download `index.html` and open it in any modern browser. No server, no dependencies, no installation required. Everything is self-contained in the single file.
 
 To add your own images, replace any `<div class="image-placeholder">` block with:
 
@@ -51,17 +44,6 @@ You are welcome to adapt this tutorial for your own teaching context. If you do,
 ## Credits
 
 **Created by** Laura Pardo  
-**Institution** Academy for AI, Games & Media (AGM), Netherlands  
+**Institution** Breda University of Applied Sciences, AGM Academy for AI, Games & Media, Netherlands  
 **Developed with the assistance of** Claude (Anthropic)  
 **License** Open educational resource — free to use and adapt for non-commercial educational purposes
-
-## Further reading
-
-Resources referenced in the tutorial:
-
-- [Nielsen Norman Group — Affinity Diagramming](https://www.nngroup.com/articles/affinity-diagram/)
-- [Nielsen Norman Group — Avoiding 3 Common Pitfalls](https://www.nngroup.com/articles/affinity-diagramming-pitfalls/)
-- [Interaction Design Foundation — How to Get Started with Affinity Diagrams](https://www.interaction-design.org/literature/article/how-to-create-affinity-diagrams)
-- [IDEO Design Kit](https://www.designkit.org/methods)
-- Holtzblatt, K. & Beyer, H. (2017). *Contextual Design: Design for Life* (2nd ed.). Morgan Kaufmann.
-- Martin, B. & Hanington, B. (2012). *Universal Methods of Design*. Rockport Publishers.
